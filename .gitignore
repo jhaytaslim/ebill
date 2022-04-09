@@ -1,0 +1,63 @@
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+
+# Visual Studio Code
+.vscode
+
+# Rider
+.idea
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+NIBSS/[Dd]ebug/
+NIBSS/[Dd]ebugPublic/
+NIBSS/[Rr]elease/
+NIBSS/[Rr]eleases/
+NIBSS/x64/
+NIBSS/x86/
+NIBSS/build/
+NIBSS/bld/
+NIBSS/[Bb]in/
+NIBSS/[Oo]bj/
+NIBSS/[Oo]ut/
+NIBSS/msbuild.log
+NIBSS/msbuild.err
+NIBSS/msbuild.wrn
+
+# Visual Studio 2015
+.vs/
+
+Migrations
+/Migrations
+
+Logs
+/Logs
+
+appsettings - Copy.json
+appsettings - Copy.Development.json
+/Logs
+appsettings.json
