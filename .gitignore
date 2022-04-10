@@ -51,8 +51,8 @@ NIBSS/msbuild.wrn
 # Visual Studio 2015
 .vs/
 
-Migrations
-/Migrations
+# Migrations
+# /Migrations
 
 Logs
 /Logs
