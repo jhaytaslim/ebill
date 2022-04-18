@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "XWtEmgWhxPcKwWfSb5SL5iJ2+sw+thO4j8iu9IvPwmpmvaHzC+gQHxY4zEWL7Ng9Kl2BpaLDmYwxUfJwJustdA==",
+  "dgSpecHash": "Vpw55NflcuBbsUNKziiLlhHFJ7ZRj1vCSasYYEJDflwyJnaTXfL4HRe5+3h+NzurTklUnrBSKYN0vO3/z4p7gg==",
   "success": true,
   "projectFilePath": "/Users/apple/Documents/Workspace/Personal/Net/ebill/ebill.csproj",
   "expectedPackageFiles": [
@@ -52,6 +52,7 @@
     "/Users/apple/.nuget/packages/system.security.permissions/4.7.0/system.security.permissions.4.7.0.nupkg.sha512",
     "/Users/apple/.nuget/packages/system.security.principal.windows/4.7.0/system.security.principal.windows.4.7.0.nupkg.sha512",
     "/Users/apple/.nuget/packages/system.text.encoding.codepages/4.7.0/system.text.encoding.codepages.4.7.0.nupkg.sha512",
+    "/Users/apple/.nuget/packages/system.text.encodings.web/6.0.0/system.text.encodings.web.6.0.0.nupkg.sha512",
     "/Users/apple/.nuget/packages/system.windows.extensions/4.7.0/system.windows.extensions.4.7.0.nupkg.sha512"
   ],
   "logs": []

@@ -55,3 +55,10 @@ public class NotificationResponse
     public bool HasError { get; set; }
     public List<object> ErrorMessages { get; set; }
 }
+
+public class Settings
+    {
+        public string Url { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }

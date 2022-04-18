@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ebill.Contracts;
+using ebill.Data.Models;
+
 
 namespace ebill.Controllers;
 
@@ -12,7 +14,14 @@ public class NIBSSController : ControllerBase
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
+
     private readonly ILogger<NIBSSController> _logger;
+    // private readonly IConfiguration _config;
+
+    // public AccountController(IConfiguration config)
+    // {
+    //     _config = config;
+    // }
 
     public NIBSSController(ILogger<NIBSSController> logger)
     {
@@ -21,16 +30,18 @@ public class NIBSSController : ControllerBase
 
     [HttpPost("validation")]
     // [HttpPost(Name = "Validation")]
-    public IEnumerable<ValidationResponse> Validation(ValidationRequest model)
+    public ActionResult<IEnumerable<ValidationResponse>> Validation(ValidationRequest model)
     {
         try
         {
             if (!ModelState.IsValid)
             {
+                Console.WriteLine("error: " + ModelState);
+                return BadRequest(new { message = "bad model", data=ModelState,});
 
             }
 
-
+            return Ok(new ValidationResponse());
         }
         catch (Exception ex)
         {
