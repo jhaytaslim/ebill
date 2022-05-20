@@ -37,6 +37,7 @@ public class Settings
     public int id { get; set; }
     public string secret { get; set; }
     public string iv { get; set; }
+    public string billerName { get; set; }
 }
 
 

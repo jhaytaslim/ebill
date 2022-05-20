@@ -20,6 +20,14 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddDbContext<DataContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+Console.WriteLine("entering scheme...");
+    builder.Services.AddAuthentication("BasicAuthentication")
+                    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>
+                    ("BasicAuthentication", null);
+    builder.Services.AddAuthorization();
+    
+    builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
     builder.Services.AddCors();
     builder.Services.AddControllers();
 
@@ -27,10 +35,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
-    builder.Services.AddAuthentication("BasicAuthentication")
-                    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>
-                    ("BasicAuthentication", null);
-    builder.Services.AddAuthorization();
+
     // configure DI for application services
     // builder.Services.AddScoped<IUserService, UserService>();
 

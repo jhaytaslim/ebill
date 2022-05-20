@@ -12,4 +12,5 @@ public class DataContext : DbContext
 
     public DbSet<Product> products { get; set; }
     public DbSet<Item> items { get; set; }
+    public DbSet<Settings> settings { get; set; }
 }

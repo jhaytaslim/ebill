@@ -62,3 +62,10 @@ public class Settings
         public string Username { get; set; }
         public string Password { get; set; }
     }
+
+    public class HmacObject
+{
+    public object request { get; set; }
+    public string iv { get; set; }
+    public string key { get; set; }
+}
