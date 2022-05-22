@@ -3,6 +3,7 @@ namespace ebill.Handlers;
 
 using ebill.Utils;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using System.Text.Encodings.Web;
 using System.Net.Http.Headers;
@@ -59,35 +60,40 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        // skip authentication if endpoint has [AllowAnonymous] attribute
+        var endpoint = Context.GetEndpoint();
+        if (endpoint?.Metadata?.GetMetadata<IAllowAnonymous>() != null)
+            return Task.FromResult(AuthenticateResult.NoResult());
+
+
+        // if (!Request.Headers.ContainsKey("Authorization"))
+        //     return AuthenticateResult.Fail("Missing Authorization Header");
+
         var authHeader = Request.Headers["Authorization"].ToString();
         var signature = Request.Headers["SIGNATURE"].ToString();
         var hmac = Request.Headers["HASH"].ToString();
         var str = Request.GetRawBodyStringAsync().GetAwaiter().GetResult();
 
-
-        // Console.WriteLine("authHeader: " + authHeader);
-        // Console.WriteLine("signature: " + signature);
-        // Console.WriteLine("body: " + str);
-
         //check if signature is equal to sha256 of todays date
         Cryptography crypt = new Cryptography();
         var dateSha256 = crypt.EncryptSHA256(DateTime.Now.ToString("yyyyMMdd"));
         var username = Cryptography.Base64Decode(authHeader);
-        // string requestJson = JsonConvert.SerializeObject(str, Formatting.Indented);
 
-        Console.WriteLine("signaturex: " + signature);
-        Console.WriteLine("username: " + username);
+        var iv = Convert.FromBase64String("FvKOOxf90nHLE+m16ydE9g==");
+        var cryptKey = Convert.FromBase64String("JzsCuaGAg6TsmyWXiMc4UvV4kUkRKykuhFBSNfs6luA=");
 
-
-        var iv = Convert.FromBase64String("QzCbS+S00RVxObAIPdnA/Q==");
-        var cryptKey = Convert.FromBase64String("cPcI8JOf4aU2/NAC4KE94Fqtt75hrI6I6gXJnj1FoXc=");
+        Console.WriteLine("str..." + str.GetType().FullName + "\n" + str);
 
         //encrypt
-        // var gMac = AESThenHMAC.SimpleEncrypt(str,
-        // cryptKey,
-        // cryptKey,
-        //  iv);
-        // Console.WriteLine("asd: " + asd);
+        var gMac = AESThenHMAC.SimpleEncrypt(str,
+        cryptKey,
+        cryptKey,
+         iv);
+
+         var pass = AESThenHMAC.SimpleDecrypt(hmac,
+        cryptKey,
+        cryptKey);
+        Console.WriteLine("pass: " + pass);
 
         // var asaf = AESThenHMAC.SimpleDecrypt(asd,
         // cryptKey,
@@ -95,27 +101,27 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         //  );
         // Console.WriteLine("asaf: " + asaf);
 
-//         if (dateSha256.ToLower() != signature.ToLower())
-//         {
-//             Response.StatusCode = 401;
-//             Response.Headers.Add("WWW-Authenticate", $"Basic realm=\"localhost\"");
-//             Response.Headers.Add("date-x", dateSha256);
-//             Response.Headers.Add("signature-x", signature);
-//             Response.Headers.Add("username", username);
-//             // Response.Body = new {msg = "Invalid SIGNATURE header" };
-//             return Task.FromResult(AuthenticateResult.Fail("Invalid SIGNATURE Header"));
-//         }
+        if (dateSha256.ToLower() != signature.ToLower())
+        {
+            Response.StatusCode = 401;
+            Response.Headers.Add("WWW-Authenticate", $"Basic realm=\"localhost\"");
+            Response.Headers.Add("date-x", dateSha256);
+            Response.Headers.Add("signature-x", signature);
+            Response.Headers.Add("username", username);
+            // Response.Body = new {msg = "Invalid SIGNATURE header" };
+            return Task.FromResult(AuthenticateResult.Fail("Invalid SIGNATURE Header"));
+        }
 
-// Console.WriteLine("gMac.ToLower(): " + gMac.ToLower());
-// Console.WriteLine("hmac.ToLower(): " + hmac.ToLower());
-//         if (gMac.ToLower() != hmac.ToLower())
-//         {
-//             Response.StatusCode = 403;
-//             Response.Headers.Add("WWW-Authenticate", $"Basic realm=\"localhost\"");
-//             Response.Headers.Add("gMac-x", gMac);
-//             // Response.Body = new {msg = "Invalid SIGNATURE header" };
-//             return Task.FromResult(AuthenticateResult.Fail("Invalid hmac Header"));
-//         }
+        // Console.WriteLine("gMac.ToLower(): " + gMac.ToLower());
+        // Console.WriteLine("hmac.ToLower(): " + hmac.ToLower());
+        // if (gMac.ToLower() != hmac.ToLower())
+        // {
+        //     Response.StatusCode = 403;
+        //     Response.Headers.Add("WWW-Authenticate", $"Basic realm=\"localhost\"");
+        //     Response.Headers.Add("gMac-x", gMac);
+        //     // Response.Body = new {msg = "Invalid SIGNATURE header" };
+        //     return Task.FromResult(AuthenticateResult.Fail("Invalid hmac Header"));
+        // }
 
         var claims = new[] { new Claim("name", "apiUser"), new Claim(ClaimTypes.Role, "Admin") };
         var identity = new ClaimsIdentity(claims, "Basic");

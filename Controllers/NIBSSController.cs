@@ -28,27 +28,36 @@ public class NIBSSController : ControllerBase
         _log = log;
     }
 
-    // private readonly ILogger<NIBSSController> _logger;
-
-    // public NIBSSController(ILogger<NIBSSController> logger)
-    // {
-    //     _logger = logger;
-    // }
-
     [HttpPost("validation")]
-    // [HttpPost(Name = "Validation")]
-    public ActionResult<IEnumerable<ValidationResponse>> Validation(ValidationRequest model)
+    public ActionResult<IEnumerable<ValidationResponse>> Validation()
     {
         try
         {
-            Console.WriteLine("here...");
             if (!ModelState.IsValid)
             {
-                Console.WriteLine("error: " + ModelState);
                 return BadRequest(new { message = "bad model", data = ModelState, });
 
             }
 
+            Data.Models.Settings settings = _unitOfWork.Settings.GetSingleOrDefault(item => item.id > 0);
+            if (settings == null)
+            {
+                return BadRequest(new { message = "settings not found" });
+            }
+
+            // get the encrypted header from the request header
+            var hmac = Request.Headers["HASH"].ToString();
+
+            // desrialize hmac string into typed request object
+            var model = JsonConvert.DeserializeObject<ValidationRequest>(AESThenHMAC.SimpleDecrypt(
+                    hmac,
+                   Convert.FromBase64String(settings.secret),
+                    Convert.FromBase64String(settings.secret)));
+
+
+            //perform ruleset validation here
+
+            //decide on the response
             return Ok(new ValidationResponse());
         }
         catch (Exception ex)
@@ -80,31 +89,37 @@ public class NIBSSController : ControllerBase
     }
 
     [HttpGet("reset")]
-    [AllowAnonymous()]
-    public ActionResult Rest()
+    [AllowAnonymous]
+    public async Task<ActionResult> Rest()
     {
         try
         {
+
             if (!ModelState.IsValid)
             {
 
             }
 
 
-            var settings = _unitOfWork.Settings.Add(new Data.Models.Settings
+            Data.Models.Settings settings = _unitOfWork.Settings.GetSingleOrDefault(item => item.id > 0);
+
+            if (settings == null)
             {
-                iv = Convert.ToBase64String(AESThenHMAC.GetIV()),
-                secret = Convert.ToBase64String(AESThenHMAC.NewKey()),
-            });
+                settings = await _unitOfWork.Settings.Add(new Data.Models.Settings
+                {
+                    billerName = "akindele04",
+                    iv = Convert.ToBase64String(AESThenHMAC.GetIV()),
+                    secret = Convert.ToBase64String(AESThenHMAC.NewKey()),
+                });
+            }
+            else
+            {
+                settings.iv = Convert.ToBase64String(AESThenHMAC.GetIV());
+                settings.secret = Convert.ToBase64String(AESThenHMAC.NewKey());
+                settings = await _unitOfWork.Settings.Update(settings);
+            }
 
-            Console.WriteLine("db settings...." + JsonConvert.SerializeObject(settings));
             return Ok(settings);
-
-            //  return Ok(new
-            // {
-            //     iv = settings.iv,
-            //     key = settings.secret,
-            // });
         }
         catch (Exception ex)
         {
@@ -115,7 +130,7 @@ public class NIBSSController : ControllerBase
 
 
     [HttpGet("hmac")]
-    [AllowAnonymous()]
+    [AllowAnonymous]
     public ActionResult GenerateHmac(HmacObject val)
     {
         try
@@ -125,13 +140,21 @@ public class NIBSSController : ControllerBase
 
             }
 
+            Data.Models.Settings settings = _unitOfWork.Settings.GetSingleOrDefault(item => item.id > 0);
+
+            if (settings == null)
+            {
+                return Ok(new { message = "settings not found" });
+            }
+
+            Console.WriteLine("val.request..." + val.request.GetType().FullName + "\n" + val.request.ToString());
             return Ok(new
             {
                 resp = AESThenHMAC.SimpleEncrypt(
-                    JsonConvert.SerializeObject(val.request),
-                   Convert.FromBase64String(val.key),
-                    Convert.FromBase64String(val.key),
-                     Convert.FromBase64String(val.iv))
+                    val.request.ToString(),
+                   Convert.FromBase64String(settings.secret),
+                    Convert.FromBase64String(settings.secret),
+                     Convert.FromBase64String(settings.iv))
             });
 
 

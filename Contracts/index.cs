@@ -2,13 +2,46 @@ using System;
 using System.Collections.Generic;
 
 namespace ebill.Contracts;
+
+public class Params
+{
+    public string ReferenceNumber { get; set; }
+    public string Phone { get; set; }
+}
+
+public class ValidationRequest
+{
+    public string SourceBankCode { get; set; }
+    public string SourceBankName { get; set; }
+    public string InstitutionCode { get; set; }
+    public string ChannelCode { get; set; }
+    public string BillerId { get; set; }
+    public string BillerName { get; set; }
+    public string ProductID { get; set; }
+    public string ProductName { get; set; }
+    public double Amount { get; set; }
+    public Params Params { get; set; }
+}
+
+
+    public class ValidationResponse
+    {
+        public string Message { get; set; }
+        public int Amount { get; set; }
+        public bool HasError { get; set; }
+        public Params Params { get; set; }
+        public List<string> ErrorMessages { get; set; }
+    }
+
+
+
 public class Item
 {
     public string Key { get; set; }
     public string Value { get; set; }
 }
 
-public class ValidationRequest
+public class ValidationRequestOld
 {
     public string SourceBankCode { get; set; }
     public string SourceBankName { get; set; }
@@ -24,7 +57,7 @@ public class ValidationRequest
     public List<Item> Param { get; set; }
 }
 
-public class ValidationResponse
+public class ValidationResponseOld
 {
     public string Message { get; set; }
     public int Amount { get; set; }
@@ -57,13 +90,13 @@ public class NotificationResponse
 }
 
 public class Settings
-    {
-        public string Url { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-    }
+{
+    public string Url { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
+}
 
-    public class HmacObject
+public class HmacObject
 {
     public object request { get; set; }
     public string iv { get; set; }

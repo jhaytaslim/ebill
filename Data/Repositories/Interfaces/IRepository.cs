@@ -9,10 +9,10 @@ namespace ebill.Data.Repository.Interface
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        TEntity Add(TEntity entity);
+        Task<TEntity> Add(TEntity entity);
         IEnumerable<TEntity> AddRange(IEnumerable<TEntity> entities);
 
-        TEntity Update(TEntity entity);
+        Task<TEntity> Update(TEntity entity);
         IEnumerable<TEntity> UpdateRange(IEnumerable<TEntity> entities);
 
         bool Remove(TEntity entity);

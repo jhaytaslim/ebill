@@ -22,21 +22,37 @@ namespace ebill.Data.Repository
             _log = log;
         }
 
-        public virtual TEntity Add(TEntity entity)
+        public async Task<TEntity> Add(TEntity entity)
         {
-            try
-            {
-                _entities.Add(entity);
-                _context.SaveChanges();
-                return entity;
-            }
-            catch (Exception ex)
-            {
-                _log.LogInformation(ex.Message + " : " + ex.InnerException + " : " + ex.StackTrace);
-                return null;
-            }
-
+            // await _context.AddAsync(entity);
+            await _context.Set<TEntity>().AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity;
         }
+
+        public async Task<TEntity> Update(TEntity entity)
+        {
+            // In case AsNoTracking is used
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        // public virtual TEntity Add(TEntity entity)
+        // {
+        //     try
+        //     {
+        //         _entities.Add(entity);
+        //         _context.SaveChanges();
+        //         return entity;
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _log.LogInformation(ex.Message + " : " + ex.InnerException + " : " + ex.StackTrace);
+        //         return null;
+        //     }
+
+        // }
 
         public virtual IEnumerable<TEntity> AddRange(IEnumerable<TEntity> entities)
         {
@@ -54,20 +70,20 @@ namespace ebill.Data.Repository
         }
 
 
-        public virtual TEntity Update(TEntity entity)
-        {
-            try
-            {
-                _entities.Update(entity);
-                _context.SaveChanges();
-                return entity;
-            }
-            catch (Exception ex)
-            {
-                _log.LogInformation(ex.Message + " : " + ex.InnerException + " : " + ex.StackTrace);
-                return null;
-            }
-        }
+        // public virtual TEntity Update(TEntity entity)
+        // {
+        //     try
+        //     {
+        //         _entities.Update(entity);
+        //         _context.SaveChanges();
+        //         return entity;
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _log.LogInformation(ex.Message + " : " + ex.InnerException + " : " + ex.StackTrace);
+        //         return null;
+        //     }
+        // }
 
         public virtual IEnumerable<TEntity> UpdateRange(IEnumerable<TEntity> entities)
         {
