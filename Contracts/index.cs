@@ -87,7 +87,7 @@ public class NotificationRequest
     public string BillerName { get; set; }
     public string ProductID { get; set; }
     public string ProductName { get; set; }
-    public string Amount { get; set; }
+    public float Amount { get; set; }
     public List<Item> Param { get; set; }
 }
 
@@ -95,6 +95,7 @@ public class NotificationResponse
 {
     public string Message { get; set; }
     public bool HasError { get; set; }
+    public float Amount { get; set; }
     public List<object> ErrorMessages { get; set; }
 }
 

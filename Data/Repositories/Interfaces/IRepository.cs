@@ -47,5 +47,6 @@ namespace ebill.Data.Repository.Interface
     public interface IOracleRepository //: IRepository<Settings>
     {
          Contracts.ValidationResponse Validation(Contracts.ValidationRequest model);
+         Contracts.NotificationResponse Notification(Contracts.NotificationRequest model);
     }
 }

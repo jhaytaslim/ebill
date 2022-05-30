@@ -22,11 +22,11 @@ namespace ebill.Data.Repository
         private string oradb2;
         private string oradb;
         private Connections _connections;
-        private  ILogger<dynamic> _log;
+        private ILogger<dynamic> _log;
         public OracleRepository(Connections connections, ILogger<dynamic> log)
         {
             _connections = connections;
-             _log = log;
+            _log = log;
             strOBJ2 = connections.obj2; // ConfigurationManager.AppSettings["obj2"].ToString();
             oradb2 = connections.idl2;  //ConfigurationManager.ConnectionStrings["idl2"].ToString();
             oradb = connections.idl;
@@ -55,7 +55,7 @@ namespace ebill.Data.Repository
                 // connect to database and retrieve customer information.
                 // string strOBJ2 = ConfigurationManager.AppSettings["obj2"].ToString();
                 // string oradb2 = ConfigurationManager.ConnectionStrings["idl2"].ToString();
-                
+
 
                 try
                 {
@@ -162,72 +162,74 @@ namespace ebill.Data.Repository
             return resp;
         }
 
-        // public NotificationResponse Notification(NotificationRequest model)
-        // {
-        //     try
-        //     {
-        //         NotificationRequest model = JsonConvert.DeserializeObject<NotificationRequest>(JsonString);
-        //         NotificationResponse resp = new NotificationResponse();
-        //         string cid = "";
-        //         string JsonString = "";
-        //         Request.InputStream.Seek(0, SeekOrigin.Begin);
-        //         JsonString = new StreamReader(Request.InputStream).ReadToEnd();
+        public NotificationResponse Notification(NotificationRequest model)
+        {
+            NotificationResponse resp = new NotificationResponse();
+            try
+            {
+                // NotificationRequest model = JsonConvert.DeserializeObject<NotificationRequest>(JsonString);
+
+                string cid = "";
+                string JsonString = "";
+                // Request.InputStream.Seek(0, SeekOrigin.Begin);
+                // JsonString = new StreamReader(Request.InputStream).ReadToEnd();
 
 
-        //         if (model == null && model.BillerID == "xyz")
-        //         {
+                if (model == null && model.BillerID == "xyz")
+                {
 
 
-        //             string CustomerName;
-        //             string Mobile;
-        //             string Email;
-        //             // connect to database and retrieve customer information.
-        //             string strOBJ2 = ConfigurationManager.AppSettings["obj2"].ToString();
-        //             string oradb2 = ConfigurationManager.ConnectionStrings["idl2"].ToString();
-        //             if (model.Amount > 0)
-        //             {
-        //                 List<Param> par = new Param();
-        //                 for (int i = 0; i < model.Param.Count; i++)
-        //                 {
-        //                     if (Param[i].Key == "AccountNumber")
-        //                     {
-        //                         cid = Param[i].Vaue;
-        //                     }
-        //                 }
-        //                 resp.Message = "Success";
-        //                 resp.HasError = "False";
-        //                 resp.Amount = 0;
-        //                 resp.ErrorMessages = null;
-        //                 resp.Param = mull;
-        //             }
-        //             else
-        //             {
-        //                 resp.Message = "Invalid payment amount";
-        //                 resp.HasError = "True";
-        //                 resp.Amount = 0;
-        //                 resp.ErrorMessages = null;
-        //                 resp.Param = mull;
-        //             }
-        //         }
-        //         else
-        //         {
-        //             resp.Message = "Invalid Biller";
-        //             resp.HasError = "True";
-        //             resp.Amount = 0;
-        //             resp.ErrorMessages = null;
-        //             resp.Param = mull;
-        //         }
+                    string CustomerName;
+                    string Mobile;
+                    string Email;
+                    // connect to database and retrieve customer information.
+                    // string strOBJ2 = ConfigurationManager.AppSettings["obj2"].ToString();
+                    // string oradb2 = ConfigurationManager.ConnectionStrings["idl2"].ToString();
+                    if (model.Amount > 0)
+                    {
+                        List<Contracts.Item> par = new List<Contracts.Item>();
+                        for (int i = 0; i < model.Param.Count; i++)
+                        {
+                            if (model.Param[i].Key == "AccountNumber")
+                            {
+                                cid = model.Param[i].Value;
+                            }
+                        }
+                        resp.Message = "Success";
+                        resp.HasError = false;
+                        resp.Amount = 0;
+                        resp.ErrorMessages = null;
+                        //resp.Param = mull;
+                    }
+                    else
+                    {
+                        resp.Message = "Invalid payment amount";
+                        resp.HasError = true;
+                        resp.Amount = 0;
+                        resp.ErrorMessages = null;
+                        //resp.Param = null;
+                    }
+                }
+                else
+                {
+                    resp.Message = "Invalid Biller";
+                    resp.HasError = true; ;
+                    resp.Amount = 0;
+                    resp.ErrorMessages = null;
+                    //resp.Param = null;
+                }
 
-        //         PostPayment(cid, model.Amount, model.CustomerAccountNumber);
+                // PostPayment needs to be written
+                //PostPayment(cid, model.Amount, model.CustomerAccountNumber);
 
-        //         return resp;
-        //     }
-        //     catch (Exception ex)
-        //     {
+                return resp;
+            }
+            catch (Exception ex)
+            {
 
-        //     }
-
-        // }
+            }
+            return resp;
+        }
 
     }
 

@@ -29,15 +29,16 @@ public class NIBSSController : ControllerBase
     }
 
     [HttpPost("validation")]
-    public ActionResult<IEnumerable<ValidationResponse>> Validation()
+    public ActionResult<ValidationResponse> Validation()
     {
         try
         {
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(new { message = "bad model", data = ModelState, });
             }
-Console.WriteLine("2...");
+            Console.WriteLine("2...");
             Data.Models.Settings settings = _unitOfWork.Settings.GetSingleOrDefault(item => item.id > 0);
             if (settings == null)
             {
@@ -46,10 +47,10 @@ Console.WriteLine("2...");
 
             // get the encrypted header from the request header
             var hmac = Request.Headers["HASH"].ToString();
-Console.WriteLine("hmac..."+ "\n" + AESThenHMAC.SimpleDecrypt(
-                    hmac,
-                   Convert.FromBase64String(settings.secret),
-                    Convert.FromBase64String(settings.secret)));
+            Console.WriteLine("hmac..." + "\n" + AESThenHMAC.SimpleDecrypt(
+                                hmac,
+                               Convert.FromBase64String(settings.secret),
+                                Convert.FromBase64String(settings.secret)));
 
             // desrialize hmac string into typed request object
             var model = JsonConvert.DeserializeObject<ValidationRequest>(AESThenHMAC.SimpleDecrypt(
@@ -57,7 +58,7 @@ Console.WriteLine("hmac..."+ "\n" + AESThenHMAC.SimpleDecrypt(
                    Convert.FromBase64String(settings.secret),
                     Convert.FromBase64String(settings.secret)));
 
-                Console.WriteLine("4...");
+            Console.WriteLine("4...");
             //perform ruleset validation here
             var response = _unitOfWork.Oracle.Validation(model);
 
@@ -66,22 +67,49 @@ Console.WriteLine("hmac..."+ "\n" + AESThenHMAC.SimpleDecrypt(
         }
         catch (Exception ex)
         {
-            _log.LogInformation(ex.Message+ "\n"+ ex.StackTrace);
+            _log.LogInformation(ex.Message + "\n" + ex.StackTrace);
 
         }
 
-        return new List<ValidationResponse>();
+        return new ValidationResponse();
     }
 
     [HttpPost("notification")]
-    public IEnumerable<NotificationResponse> Notification(NotificationRequest model)
+    public ActionResult<NotificationResponse> Notification()
     {
         try
         {
+
             if (!ModelState.IsValid)
             {
-
+                return BadRequest(new { message = "bad model", data = ModelState, });
             }
+            Console.WriteLine("2...");
+            Data.Models.Settings settings = _unitOfWork.Settings.GetSingleOrDefault(item => item.id > 0);
+            if (settings == null)
+            {
+                return BadRequest(new { message = "settings not found" });
+            }
+
+            // get the encrypted header from the request header
+            var hmac = Request.Headers["HASH"].ToString();
+            Console.WriteLine("hmac..." + "\n" + AESThenHMAC.SimpleDecrypt(
+                                hmac,
+                               Convert.FromBase64String(settings.secret),
+                                Convert.FromBase64String(settings.secret)));
+
+            // desrialize hmac string into typed request object
+            var model = JsonConvert.DeserializeObject<NotificationRequest>(AESThenHMAC.SimpleDecrypt(
+                    hmac,
+                   Convert.FromBase64String(settings.secret),
+                    Convert.FromBase64String(settings.secret)));
+
+            Console.WriteLine("4...");
+            //perform ruleset validation here
+            var response = _unitOfWork.Oracle.Notification(model);
+
+            //decide on the response
+            return Ok(response);
 
 
         }
@@ -89,7 +117,7 @@ Console.WriteLine("hmac..."+ "\n" + AESThenHMAC.SimpleDecrypt(
         {
 
         }
-        return new List<NotificationResponse>();
+        return new NotificationResponse();
     }
 
     [HttpGet("reset")]
