@@ -26,6 +26,9 @@ Console.WriteLine("entering scheme...");
                     ("BasicAuthentication", null);
     builder.Services.AddAuthorization();
     
+
+    // custom injections
+    builder.Services.Configure<Connections>(builder.Configuration.GetSection("ConnectionStrings"));
     builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
     builder.Services.AddCors();

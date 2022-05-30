@@ -13,5 +13,6 @@ namespace ebill.Data
         IItemRepository Item { get; }
 
         ISettingsRepository Settings { get; }
+        IOracleRepository Oracle { get; }
     }
 }

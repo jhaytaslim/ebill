@@ -3,10 +3,19 @@ using System.Collections.Generic;
 
 namespace ebill.Contracts;
 
+public class Customer
+{
+    public string CustomerName { get; set; }
+    public string Mobile { get; set; }
+    public string Email { get; set; }
+}
+
 public class Params
 {
-    public string ReferenceNumber { get; set; }
-    public string Phone { get; set; }
+    public string CustomerName { get; set; }
+    public string Mobile { get; set; }
+    public string? Email { get; set; }
+    public string? AccountNumber { get; set; }
 }
 
 public class ValidationRequest
@@ -101,4 +110,13 @@ public class HmacObject
     public object request { get; set; }
     public string iv { get; set; }
     public string key { get; set; }
+}
+
+public class Connections
+{
+     public string obj { get; set; }
+    public string obj2 { get; set; }
+    public string idl2 { get; set; }
+    public string idl { get; set; }
+    public string DefaultConnection { get; set; }
 }

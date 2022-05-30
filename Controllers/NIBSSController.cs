@@ -36,9 +36,8 @@ public class NIBSSController : ControllerBase
             if (!ModelState.IsValid)
             {
                 return BadRequest(new { message = "bad model", data = ModelState, });
-
             }
-
+Console.WriteLine("2...");
             Data.Models.Settings settings = _unitOfWork.Settings.GetSingleOrDefault(item => item.id > 0);
             if (settings == null)
             {
@@ -47,6 +46,10 @@ public class NIBSSController : ControllerBase
 
             // get the encrypted header from the request header
             var hmac = Request.Headers["HASH"].ToString();
+Console.WriteLine("hmac..."+ "\n" + AESThenHMAC.SimpleDecrypt(
+                    hmac,
+                   Convert.FromBase64String(settings.secret),
+                    Convert.FromBase64String(settings.secret)));
 
             // desrialize hmac string into typed request object
             var model = JsonConvert.DeserializeObject<ValidationRequest>(AESThenHMAC.SimpleDecrypt(
@@ -54,14 +57,16 @@ public class NIBSSController : ControllerBase
                    Convert.FromBase64String(settings.secret),
                     Convert.FromBase64String(settings.secret)));
 
-
+                Console.WriteLine("4...");
             //perform ruleset validation here
+            var response = _unitOfWork.Oracle.Validation(model);
 
             //decide on the response
-            return Ok(new ValidationResponse());
+            return Ok(response);
         }
         catch (Exception ex)
         {
+            _log.LogInformation(ex.Message+ "\n"+ ex.StackTrace);
 
         }
 
@@ -69,7 +74,6 @@ public class NIBSSController : ControllerBase
     }
 
     [HttpPost("notification")]
-    // [HttpPost(Name = "Notification")]
     public IEnumerable<NotificationResponse> Notification(NotificationRequest model)
     {
         try
@@ -127,7 +131,6 @@ public class NIBSSController : ControllerBase
         }
 
     }
-
 
     [HttpGet("hmac")]
     [AllowAnonymous]

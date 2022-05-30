@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using ebill.Data.Repository;
 using ebill.Data.Repository.Interface;
 using ebill.Data.Models;
+using ebill.Contracts;
+using Microsoft.Extensions.Options;
 
 namespace ebill.Data
 {
@@ -14,18 +16,32 @@ namespace ebill.Data
 
         readonly DataContext _context;
         readonly ILogger<dynamic> _log;
+        readonly Connections _connections;
 
         public IProductRepository _ProductRepository;
         public IItemRepository _ItemRepository;
         public ISettingsRepository _SettingsRepository;
+        public IOracleRepository  _OracleRepository;
 
 
-        public UnitOfWork(DataContext context, ILogger<dynamic> log)
+        public UnitOfWork(DataContext context, ILogger<dynamic> log,IOptionsMonitor<Connections> connectionsMonitor)
         {
             _context = context;
             _log = log;
+            _connections = connectionsMonitor.CurrentValue;
         }
 
+
+        public IOracleRepository Oracle
+        {
+            get
+            {
+                if (_OracleRepository == null)
+                    _OracleRepository = new OracleRepository(_connections, _log);
+
+                return _OracleRepository;
+            }
+        }
         public IProductRepository Product
         {
             get
@@ -37,7 +53,8 @@ namespace ebill.Data
             }
         }
 
-        public IItemRepository Item {
+        public IItemRepository Item
+        {
             get
             {
                 if (_ItemRepository == null)

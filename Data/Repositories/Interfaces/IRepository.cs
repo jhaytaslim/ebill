@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ebill.Data.Models;
 using System.Linq.Expressions;
-
+using ebill;
 namespace ebill.Data.Repository.Interface
 {
     public interface IRepository<TEntity> where TEntity : class
@@ -44,4 +44,8 @@ namespace ebill.Data.Repository.Interface
 
     }
 
+    public interface IOracleRepository //: IRepository<Settings>
+    {
+         Contracts.ValidationResponse Validation(Contracts.ValidationRequest model);
+    }
 }
