@@ -39,8 +39,6 @@ Console.WriteLine("entering scheme...");
     builder.Services.AddSwaggerGen();
 
 
-    // configure DI for application services
-    // builder.Services.AddScoped<IUserService, UserService>();
 
 }
 
