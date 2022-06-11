@@ -61,3 +61,4 @@ appsettings - Copy.json
 appsettings - Copy.Development.json
 /Logs
 appsettings.json
+*.Development
