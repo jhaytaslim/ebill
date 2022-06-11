@@ -20,12 +20,16 @@ public class NIBSSController : ControllerBase
 
     private IUnitOfWork _unitOfWork;
     private ILogger<dynamic> _log;
+    private IEmailService _emailService;
+    private IEmailSettings _emailSettings;
 
 
-    public NIBSSController(IUnitOfWork unitOfWork, ILogger<dynamic> log)
+    public NIBSSController(IUnitOfWork unitOfWork, ILogger<dynamic> log, EmailService emailService, EmailSettings emailSettings)
     {
         _unitOfWork = unitOfWork;
         _log = log;
+        _emailService = emailService;
+        _emailSettings = emailSettings;
     }
 
     [HttpPost("validation")]
@@ -126,13 +130,6 @@ public class NIBSSController : ControllerBase
     {
         try
         {
-
-            if (!ModelState.IsValid)
-            {
-
-            }
-
-
             Data.Models.Settings settings = _unitOfWork.Settings.GetSingleOrDefault(item => item.id > 0);
 
             if (settings == null)
@@ -151,11 +148,18 @@ public class NIBSSController : ControllerBase
                 settings = await _unitOfWork.Settings.Update(settings);
             }
 
-            return Ok(settings);
+            await _emailService.SendEmail(new MailVM
+            {
+                Title = "New Secret/IV Pair",
+                Recipient = _emailSettings.Recipient,
+                Message = $"Please find below the new details\n Secret/Key: {settings.secret}\n IV: {settings.iv}.\n"
+
+            });
+            return Ok();
         }
         catch (Exception ex)
         {
-            return Ok();
+            return Ok(new{msg = "error sending values"});
         }
 
     }

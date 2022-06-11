@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using System.Text.Encodings.Web;
 using System.Net.Http.Headers;
 using System.Text;
+using ebill.Utils;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,16 +21,21 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddDbContext<DataContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-Console.WriteLine("entering scheme...");
+    Console.WriteLine("entering scheme...");
     builder.Services.AddAuthentication("BasicAuthentication")
                     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>
                     ("BasicAuthentication", null);
     builder.Services.AddAuthorization();
-    
+
 
     // custom injections
     builder.Services.Configure<Connections>(builder.Configuration.GetSection("ConnectionStrings"));
     builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+    var settings = new EmailSettings();
+    builder.Configuration.Bind("EmailSettings", settings);
+    builder.Services.AddSingleton<IEmailSettings>(settings);
+
+    services.AddSingleton<IEmailService, EmailService>();
 
     builder.Services.AddCors();
     builder.Services.AddControllers();
