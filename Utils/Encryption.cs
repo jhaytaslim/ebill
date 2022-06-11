@@ -18,7 +18,7 @@ namespace ebill.Utils
 
         //Preconfigured Encryption Parameters
         public static readonly int BlockBitSize = 128;
-        public static readonly int KeyBitSize = 256;
+        public static readonly int KeyBitSize = 128;
 
         //Preconfigured Password Key Derivation Parameters
         public static readonly int SaltBitSize = 64;
