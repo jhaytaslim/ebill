@@ -279,7 +279,7 @@ namespace ebill.Data.Repository
                     {
 
                         strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " (Notification SESSION ) :" + sessionID; //+ "SELECT [BPCNUM_0] ,[BPCNAM_0] ,  [BPANUM_0]   ,[BPAADDLIG_0] ,[BPAADDLIG_1] ,[BPAADDLIG_2]   ,[MOB_0] ,[WEB_0], [POSCOD_0] ,[CTY_0] ,[SAT_0] ,[CRY_0] ,[CRYNAM_0] FROM [" + strOBJ + "].[BPCUSTOMER]  inner join  [" + strOBJ + "].[BPADDRESS] on BPCNUM_0 = BPANUM_0 WHERE upper(rtrim(ltrim(BPCNUM_0))) =  upper('" + customerID.Trim() + "')";
-                        System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                        //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                         add++;
                         ok = true;
                     }
@@ -297,7 +297,7 @@ namespace ebill.Data.Repository
                         {
 
                             strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " \r\n\r\n(Notification request SQL) :" + " selected";
-                            System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                            //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                             add++;
                             ok = true;
                         }
@@ -312,7 +312,7 @@ namespace ebill.Data.Repository
                             {
 
                                 strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " \r\n\r\n(Notification request SQL) :" + " has rows";
-                                System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                                //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                                 add++;
                                 ok = true;
                             }
@@ -327,7 +327,7 @@ namespace ebill.Data.Repository
                                 {
 
                                     strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " \r\n\r\n(Notification request SQL) :" + " in read";
-                                    System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                                    //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                                     add++;
                                     ok = true;
                                 }
@@ -345,7 +345,7 @@ namespace ebill.Data.Repository
                                     {
 
                                         strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " \r\n\r\n(Notification request SQL) :" + " start read";
-                                        System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                                        //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                                         add++;
                                         ok = true;
                                     }
@@ -371,7 +371,7 @@ namespace ebill.Data.Repository
                                     {
 
                                         strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " \r\n\r\n(Notification request SQL) :" + " done read";
-                                        System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                                        //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                                         add++;
                                         ok = true;
                                     }
@@ -416,7 +416,7 @@ namespace ebill.Data.Repository
                     string strLine = "";
                     string strDate = "";
                     strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " \r\n\r\n(Notification request SQL) :" + " error : " + c.Message;
-                    System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                    //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                     add++;
                     ok = true;
                 }
@@ -428,201 +428,202 @@ namespace ebill.Data.Repository
 
 
 
-            if (BPANUM_0.Trim().Length > 0)
-            {
+            // if (BPANUM_0.Trim().Length > 0)
+            // {
 
 
 
 
 
 
-                try
-                {
-                    string sessionID;
-                    string[] result = { "", "", "" };
-                    string oradb = _connections.idl; //ConfigurationManager.ConnectionStrings["idl"].ToString();
-                    string sql1 = "";
-                    string COUNTT = "";
-                    using (SqlConnection conn = new SqlConnection(oradb))
-                    {
-                        conn.Open();
-                        //   strResult = "{ \"items\": [ ";
-                        //AGENT-BP000001
-                        //
-                        //string d = (System.DateTime.Now.ToString("yyMMddHHmmss"));
-                        //string h = toHex(d);
-                        ////Taslim
-                        string strCode = "";//= /"RECAIDL"/ "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss"));
-                        using (SqlCommand cmd = new SqlCommand("SELECT  count(*) c  FROM  [" + strOBJ + "].[PAYMENTH]   where rtrim(ltrim(upper(NUM_0))) like '" + strCode.ToUpper() + "%'", conn))
-                        {
-                            SqlDataReader reader = cmd.ExecuteReader();
+            //     try
+            //     {
+            //         string sessionID;
+            //         string[] result = { "", "", "" };
+            //         string oradb = _connections.idl; //ConfigurationManager.ConnectionStrings["idl"].ToString();
+            //         string sql1 = "";
+            //         string COUNTT = "";
+            //         using (SqlConnection conn = new SqlConnection(oradb))
+            //         {
+            //             conn.Open();
+            //             //   strResult = "{ \"items\": [ ";
+            //             //AGENT-BP000001
+            //             //
+            //             //string d = (System.DateTime.Now.ToString("yyMMddHHmmss"));
+            //             //string h = toHex(d);
+            //             ////Taslim
+            //             string strCode = "";//= /"RECAIDL"/ "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss"));
+            //             using (SqlCommand cmd = new SqlCommand("SELECT  count(*) c  FROM  [" + strOBJ + "].[PAYMENTH]   where rtrim(ltrim(upper(NUM_0))) like '" + strCode.ToUpper() + "%'", conn))
+            //             {
+            //                 SqlDataReader reader = cmd.ExecuteReader();
 
-                            if (reader.HasRows)
-                            {
-                                while (reader.Read())
-                                {
+            //                 if (reader.HasRows)
+            //                 {
+            //                     while (reader.Read())
+            //                     {
 
-                                    if (reader.HasRows)
-                                    {
-                                        while (reader.Read())
-                                        {
+            //                         if (reader.HasRows)
+            //                         {
+            //                             while (reader.Read())
+            //                             {
 
-                                            COUNTT = reader["c"].ToString();
-                                            strCode += (long.Parse(COUNTT) + 1).ToString();
-                                            break;
+            //                                 COUNTT = reader["c"].ToString();
+            //                                 strCode += (long.Parse(COUNTT) + 1).ToString();
+            //                                 break;
 
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // MessageBox.Show("No rows found.");
-                                    }
-                                    reader.Close();
-                                    // }
-
-
-
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                // MessageBox.Show("No rows found.");
-                            }
-                            reader.Close();
-                        }
-
-                        conn.Dispose();
-                    }
+            //                             }
+            //                         }
+            //                         else
+            //                         {
+            //                             // MessageBox.Show("No rows found.");
+            //                         }
+            //                         reader.Close();
+            //                         // }
 
 
 
-                }
-                catch (Exception c)
-                {
+            //                         break;
+            //                     }
+            //                 }
+            //                 else
+            //                 {
+            //                     // MessageBox.Show("No rows found.");
+            //                 }
+            //                 reader.Close();
+            //             }
 
-                }
-
-                string strLongDate = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-                string sql = "";
-                string strDate = "";
-                //0 - strCode
-                //1 - customerID
-                //2 - item.Amount.Replace(",","")
-                //3 - item.Amount.Replace(",","")
-                //4 - strLongDate
-                //5 - strLongDate
-                //6 - strOBJ
-
-
-                int n = -1;
-                try
-                {
-                    string[] result = { "", "", "" };
-                    string oradb = _connections.idl; // ConfigurationManager.ConnectionStrings["idl"].ToString();
-                    string sql1 = "";
-                    using (SqlConnection conn = new SqlConnection(oradb))
-                    {
-                        conn.Open();
-                        //   strResult = "{ \"items\": [ ";
-                        //AGENT-BP000001
-                        //Taslim
-                        string strCode=""; //=  /"RECAIDL"/  "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss"));//"RECAIDL" + System.DateTime.Now.ToString("yymm");
-
-                        String SQL = string.Format(ResourceManager.GetString("pd.sql"), strCode.Replace("'", "`"), customerID.Replace("'", "`"), Amount.Replace(",", ""), Amount.Replace(",", ""), strLongDate.Replace("'", "`"), strLongDate.Replace("'", "`"), strOBJ.Replace("'", "`"), sessionID.Replace("'", "`"));
-                        sql += SQL;
-                        using (SqlCommand cmd = new SqlCommand(SQL, conn))
-                        {
-                            // n =  cmd.ExecuteNonQuery();
-
-
-                        }
-
-                        conn.Dispose();
-                    }
+            //             conn.Dispose();
+            //         }
 
 
 
-                }
-                catch (Exception c)
-                {
+            //     }
+            //     catch (Exception c)
+            //     {
+
+            //     }
+
+            //     string strLongDate = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            //     string sql = "";
+            //     string strDate = "";
+            //     //0 - strCode
+            //     //1 - customerID
+            //     //2 - item.Amount.Replace(",","")
+            //     //3 - item.Amount.Replace(",","")
+            //     //4 - strLongDate
+            //     //5 - strLongDate
+            //     //6 - strOBJ
+
+
+            //     int n = -1;
+            //     try
+            //     {
+            //         string[] result = { "", "", "" };
+            //         string oradb = _connections.idl; // ConfigurationManager.ConnectionStrings["idl"].ToString();
+            //         string sql1 = "";
+            //         using (SqlConnection conn = new SqlConnection(oradb))
+            //         {
+            //             conn.Open();
+            //             //   strResult = "{ \"items\": [ ";
+            //             //AGENT-BP000001
+            //             //Taslim
+            //             string strCode=""; //=  /"RECAIDL"/  "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss"));//"RECAIDL" + System.DateTime.Now.ToString("yymm");
+
+            //             String SQL = string.Format(ResourceManager.GetString("pd.sql"), strCode.Replace("'", "`"), customerID.Replace("'", "`"), Amount.Replace(",", ""), Amount.Replace(",", ""), strLongDate.Replace("'", "`"), strLongDate.Replace("'", "`"), strOBJ.Replace("'", "`"), sessionID.Replace("'", "`"));
+            //             sql += SQL;
+            //             using (SqlCommand cmd = new SqlCommand(SQL, conn))
+            //             {
+            //                 // n =  cmd.ExecuteNonQuery();
+
+
+            //             }
+
+            //             conn.Dispose();
+            //         }
 
 
 
-                    try
-                    {
-
-                        string strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " (Notification D ERROR ) :" + c.Message; //+ "SELECT [BPCNUM_0] ,[BPCNAM_0] ,  [BPANUM_0]   ,[BPAADDLIG_0] ,[BPAADDLIG_1] ,[BPAADDLIG_2]   ,[MOB_0] ,[WEB_0], [POSCOD_0] ,[CTY_0] ,[SAT_0] ,[CRY_0] ,[CRYNAM_0] FROM [" + strOBJ + "].[BPCUSTOMER]  inner join  [" + strOBJ + "].[BPADDRESS] on BPCNUM_0 = BPANUM_0 WHERE upper(rtrim(ltrim(BPCNUM_0))) =  upper('" + customerID.Trim() + "')";
-                        System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
-                        add++;
-                        ok = true;
-                    }
-                    catch (Exception ds)
-                    {
-
-                    }
-
-                }
+            //     }
+            //     catch (Exception c)
+            //     {
 
 
+
+            //         try
+            //         {
+
+            //             string strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " (Notification D ERROR ) :" + c.Message; //+ "SELECT [BPCNUM_0] ,[BPCNAM_0] ,  [BPANUM_0]   ,[BPAADDLIG_0] ,[BPAADDLIG_1] ,[BPAADDLIG_2]   ,[MOB_0] ,[WEB_0], [POSCOD_0] ,[CTY_0] ,[SAT_0] ,[CRY_0] ,[CRYNAM_0] FROM [" + strOBJ + "].[BPCUSTOMER]  inner join  [" + strOBJ + "].[BPADDRESS] on BPCNUM_0 = BPANUM_0 WHERE upper(rtrim(ltrim(BPCNUM_0))) =  upper('" + customerID.Trim() + "')";
+            //             //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+            //             add++;
+            //             ok = true;
+            //         }
+            //         catch (Exception ds)
+            //         {
+
+            //         }
+
+            //     }
 
 
 
 
-                try
-                {
-
-                    string[] result = { "", "", "" };
-                    string oradb = ConfigurationManager.ConnectionStrings["idl"].ToString();
-                    string sql1 = "";
-                    using (SqlConnection conn = new SqlConnection(oradb))
-                    {
-                        conn.Open();
-                        //   strResult = "{ \"items\": [ ";
-                        //AGENT-BP000001
-                        //Taslim
-                        string strCode= ""; //= /"RECAIDL"/  "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss")); ;// "RECAIDL" + System.DateTime.Now.ToString("yymm");
-                        ///
 
 
-                        //String SQL = string.Format(ResourceManager.GetString("ph.sql"), strOBJ, strCode, customerID, item.Amount.Replace(",", ""), strLongDate, "NIBSS - IDL integration", BPCNAM_0, BPAADDLIG_0, BPAADDLIG_1, BPAADDLIG_2, POSCOD_0, CTY_0, SAT_0, CRY_0, CRYNAM_0, bankCode);
+            //     try
+            //     {
 
-                        String SQL = string.Format(ResourceManager.GetString("ph.sql"), strOBJ.Replace("'", "`"), strCode.Replace("'", "`"), customerID.Replace("'", "`"), Amount.Replace(",", ""), strLongDate.Replace("'", "`"), CustomerAccountNumber.Replace("'", "`"), BPCNAM_0.Replace("'", "`"), BPAADDLIG_0.Replace("'", "`"), BPAADDLIG_1.Replace("'", "`"), BPAADDLIG_2.Replace("'", "`"), POSCOD_0.Replace("'", "`"), CTY_0.Replace("'", "`"), SAT_0.Replace("'", "`"), CRY_0.Replace("'", "`"), CRYNAM_0.Replace("'", "`"), bankCode.Replace("'", "`"), sessionID.Replace("'", "`"));
-
-
-                        sql += ";;;;;;" + SQL + ";;;;;;";
-                        using (SqlCommand cmd = new SqlCommand(SQL, conn))
-                        {
-                            //   n = cmd.ExecuteNonQuery();
-
-
-                        }
-
-                        conn.Dispose();
-                    }
-
+            //         string[] result = { "", "", "" };
+            //         string oradb = ConfigurationManager.ConnectionStrings["idl"].ToString();
+            //         string sql1 = "";
+            //         using (SqlConnection conn = new SqlConnection(oradb))
+            //         {
+            //             conn.Open();
+            //             //   strResult = "{ \"items\": [ ";
+            //             //AGENT-BP000001
+            //             //Taslim
+            //             string strCode= ""; //= /"RECAIDL"/  "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss")); ;// "RECAIDL" + System.DateTime.Now.ToString("yymm");
+            //             ///
 
 
-                }
-                catch (Exception c)
-                {
+            //             //String SQL = string.Format(ResourceManager.GetString("ph.sql"), strOBJ, strCode, customerID, item.Amount.Replace(",", ""), strLongDate, "NIBSS - IDL integration", BPCNAM_0, BPAADDLIG_0, BPAADDLIG_1, BPAADDLIG_2, POSCOD_0, CTY_0, SAT_0, CRY_0, CRYNAM_0, bankCode);
+
+            //             String SQL = string.Format(ResourceManager.GetString("ph.sql"), strOBJ.Replace("'", "`"), strCode.Replace("'", "`"), customerID.Replace("'", "`"), Amount.Replace(",", ""), strLongDate.Replace("'", "`"), CustomerAccountNumber.Replace("'", "`"), BPCNAM_0.Replace("'", "`"), BPAADDLIG_0.Replace("'", "`"), BPAADDLIG_1.Replace("'", "`"), BPAADDLIG_2.Replace("'", "`"), POSCOD_0.Replace("'", "`"), CTY_0.Replace("'", "`"), SAT_0.Replace("'", "`"), CRY_0.Replace("'", "`"), CRYNAM_0.Replace("'", "`"), bankCode.Replace("'", "`"), sessionID.Replace("'", "`"));
 
 
-                    try
-                    {
+            //             sql += ";;;;;;" + SQL + ";;;;;;";
+            //             using (SqlCommand cmd = new SqlCommand(SQL, conn))
+            //             {
+            //                 //   n = cmd.ExecuteNonQuery();
 
-                        string strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " (Notification H ERROR ) :" + c.Message; //+ "SELECT [BPCNUM_0] ,[BPCNAM_0] ,  [BPANUM_0]   ,[BPAADDLIG_0] ,[BPAADDLIG_1] ,[BPAADDLIG_2]   ,[MOB_0] ,[WEB_0], [POSCOD_0] ,[CTY_0] ,[SAT_0] ,[CRY_0] ,[CRYNAM_0] FROM [" + strOBJ + "].[BPCUSTOMER]  inner join  [" + strOBJ + "].[BPADDRESS] on BPCNUM_0 = BPANUM_0 WHERE upper(rtrim(ltrim(BPCNUM_0))) =  upper('" + customerID.Trim() + "')";
-                        System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
-                        add++;
-                        ok = true;
-                    }
-                    catch (Exception ds)
-                    {
 
-                    }
-                }
+            //             }
 
-            }
+            //             conn.Dispose();
+            //         }
+
+
+
+            //     }
+            //     catch (Exception c)
+            //     {
+
+
+            //         try
+            //         {
+
+            //             string strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " (Notification H ERROR ) :" + c.Message; //+ "SELECT [BPCNUM_0] ,[BPCNAM_0] ,  [BPANUM_0]   ,[BPAADDLIG_0] ,[BPAADDLIG_1] ,[BPAADDLIG_2]   ,[MOB_0] ,[WEB_0], [POSCOD_0] ,[CTY_0] ,[SAT_0] ,[CRY_0] ,[CRYNAM_0] FROM [" + strOBJ + "].[BPCUSTOMER]  inner join  [" + strOBJ + "].[BPADDRESS] on BPCNUM_0 = BPANUM_0 WHERE upper(rtrim(ltrim(BPCNUM_0))) =  upper('" + customerID.Trim() + "')";
+            //             //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+            //             add++;
+            //             ok = true;
+            //         }
+            //         catch (Exception ds)
+            //         {
+
+            //         }
+            //     }
+
+            // }
+        
         }
 
     }

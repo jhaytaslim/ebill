@@ -24,7 +24,7 @@ public class NIBSSController : ControllerBase
     private IEmailSettings _emailSettings;
 
 
-    public NIBSSController(IUnitOfWork unitOfWork, ILogger<dynamic> log, EmailService emailService, EmailSettings emailSettings)
+    public NIBSSController(IUnitOfWork unitOfWork, ILogger<dynamic> log, IEmailService emailService, IEmailSettings emailSettings)
     {
         _unitOfWork = unitOfWork;
         _log = log;
