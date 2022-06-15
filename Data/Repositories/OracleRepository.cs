@@ -220,7 +220,7 @@ namespace ebill.Data.Repository
                 }
 
                 // PostPayment needs to be written
-                PostPayment(cid, model.Amount, model.CustomerAccountNumber);
+                PostPayment(cid, Convert.ToDecimal(model.Amount), model.CustomerAccountNumber);
 
                 return resp;
             }
@@ -234,7 +234,7 @@ namespace ebill.Data.Repository
 
         private void PostPayment(string customerID, decimal Amount, string CustomerAccountNumber)
         {
-            string strOBJ = ConfigurationManager.AppSettings["obj"].ToString();
+            string strOBJ = _connections.obj;
             Boolean ok = false;
             string extra = "";
             int add = 0;
@@ -260,7 +260,7 @@ namespace ebill.Data.Repository
 
                 string sql = "";
                 string COUNTT = "";
-                string oradb = ConfigurationManager.ConnectionStrings["idl"].ToString();
+                string oradb = _connections.idl;// ConfigurationManager.ConnectionStrings["idl"].ToString();
                 string sql1 = "";
                 using (SqlConnection conn = new SqlConnection(oradb))
                 {
@@ -440,7 +440,7 @@ namespace ebill.Data.Repository
                 {
                     string sessionID;
                     string[] result = { "", "", "" };
-                    string oradb = ConfigurationManager.ConnectionStrings["idl"].ToString();
+                    string oradb = _connections.idl; //ConfigurationManager.ConnectionStrings["idl"].ToString();
                     string sql1 = "";
                     string COUNTT = "";
                     using (SqlConnection conn = new SqlConnection(oradb))
@@ -452,7 +452,7 @@ namespace ebill.Data.Repository
                         //string d = (System.DateTime.Now.ToString("yyMMddHHmmss"));
                         //string h = toHex(d);
                         ////Taslim
-                        string strCode;//= /"RECAIDL"/ "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss"));
+                        string strCode = "";//= /"RECAIDL"/ "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss"));
                         using (SqlCommand cmd = new SqlCommand("SELECT  count(*) c  FROM  [" + strOBJ + "].[PAYMENTH]   where rtrim(ltrim(upper(NUM_0))) like '" + strCode.ToUpper() + "%'", conn))
                         {
                             SqlDataReader reader = cmd.ExecuteReader();
@@ -519,7 +519,7 @@ namespace ebill.Data.Repository
                 try
                 {
                     string[] result = { "", "", "" };
-                    string oradb = ConfigurationManager.ConnectionStrings["idl"].ToString();
+                    string oradb = _connections.idl; // ConfigurationManager.ConnectionStrings["idl"].ToString();
                     string sql1 = "";
                     using (SqlConnection conn = new SqlConnection(oradb))
                     {
@@ -527,7 +527,7 @@ namespace ebill.Data.Repository
                         //   strResult = "{ \"items\": [ ";
                         //AGENT-BP000001
                         //Taslim
-                        string strCode; //=  /"RECAIDL"/  "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss"));//"RECAIDL" + System.DateTime.Now.ToString("yymm");
+                        string strCode=""; //=  /"RECAIDL"/  "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss"));//"RECAIDL" + System.DateTime.Now.ToString("yymm");
 
                         String SQL = string.Format(ResourceManager.GetString("pd.sql"), strCode.Replace("'", "`"), customerID.Replace("'", "`"), Amount.Replace(",", ""), Amount.Replace(",", ""), strLongDate.Replace("'", "`"), strLongDate.Replace("'", "`"), strOBJ.Replace("'", "`"), sessionID.Replace("'", "`"));
                         sql += SQL;
@@ -581,7 +581,7 @@ namespace ebill.Data.Repository
                         //   strResult = "{ \"items\": [ ";
                         //AGENT-BP000001
                         //Taslim
-                        string strCode; //= /"RECAIDL"/  "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss")); ;// "RECAIDL" + System.DateTime.Now.ToString("yymm");
+                        string strCode= ""; //= /"RECAIDL"/  "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss")); ;// "RECAIDL" + System.DateTime.Now.ToString("yymm");
                         ///
 
 
