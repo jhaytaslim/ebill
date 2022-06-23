@@ -64,7 +64,6 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         var dateSha256 = crypt.EncryptSHA256(DateTime.Now.ToString("yyyyMMdd"));
         var username = Cryptography.Base64Decode(authHeader);
 
-Console.WriteLine("dateSha256: " + signature);
         if (dateSha256.ToLower() != signature.ToLower())
         {
             Response.StatusCode = 401;

@@ -13,10 +13,7 @@ namespace ebill.Controllers;
 [Authorize(AuthenticationSchemes = "BasicAuthentication")]
 public class NIBSSController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+    
 
     private IUnitOfWork _unitOfWork;
     private ILogger<dynamic> _log;
@@ -42,7 +39,7 @@ public class NIBSSController : ControllerBase
             {
                 return BadRequest(new { message = "bad model", data = ModelState, });
             }
-            Console.WriteLine("2...");
+            //Console.WriteLine("2...");
             Data.Models.Settings settings = _unitOfWork.Settings.GetSingleOrDefault(item => item.id > 0);
             if (settings == null)
             {
@@ -51,13 +48,12 @@ public class NIBSSController : ControllerBase
 
             // get the encrypted header from the request header
             var hmac = Request.Headers["HASH"].ToString();
-            var test = System.Text.Encoding.UTF8.GetBytes(settings.secret);
-            Console.WriteLine("test..." + settings.secret + "\n" + test.Length);
-            Console.WriteLine("hmac..." + "\n" + AESThenHMAC.Decrypt(
-                    hmac,
-                    settings.secret,
-                    settings.iv)
-                                );
+            
+            // Console.WriteLine("hmac..." + "\n" + AESThenHMAC.Decrypt(
+            //         hmac,
+            //         settings.secret,
+            //         settings.iv)
+            //                     );
 
             // desrialize hmac string into typed request object
             var model = JsonConvert.DeserializeObject<ValidationRequest>(AESThenHMAC.Decrypt(
@@ -65,7 +61,7 @@ public class NIBSSController : ControllerBase
                     settings.secret,
                     settings.iv));
 
-            Console.WriteLine("4...");
+            //Console.WriteLine("4...");
             //perform ruleset validation here
             var response = _unitOfWork.Oracle.Validation(model);
 
@@ -91,7 +87,7 @@ public class NIBSSController : ControllerBase
             {
                 return BadRequest(new { message = "bad model", data = ModelState, });
             }
-            Console.WriteLine("2...");
+            //Console.WriteLine("2...");
             Data.Models.Settings settings = _unitOfWork.Settings.GetSingleOrDefault(item => item.id > 0);
             if (settings == null)
             {
@@ -100,11 +96,11 @@ public class NIBSSController : ControllerBase
 
             // get the encrypted header from the request header
             var hmac = Request.Headers["HASH"].ToString();
-            Console.WriteLine("hmac..." + "\n" + AESThenHMAC.Decrypt(
-                    hmac,
-                    settings.secret,
-                    settings.iv)
-                                );
+            // Console.WriteLine("hmac..." + "\n" + AESThenHMAC.Decrypt(
+            //         hmac,
+            //         settings.secret,
+            //         settings.iv)
+            //                     );
 
             // desrialize hmac string into typed request object
             var model = JsonConvert.DeserializeObject<NotificationRequest>(AESThenHMAC.Decrypt(
@@ -112,7 +108,7 @@ public class NIBSSController : ControllerBase
                     settings.secret,
                     settings.iv));
 
-            Console.WriteLine("4...");
+            //Console.WriteLine("4...");
             //perform ruleset validation here
             var response = _unitOfWork.Oracle.Notification(model);
 
@@ -159,14 +155,14 @@ public class NIBSSController : ControllerBase
                 settings = await _unitOfWork.Settings.Update(settings);
             }
 
-            // await _emailService.SendEmail(new MailVM
-            // {
-            //     Title = "New Secret/IV Pair",
-            //     Recipient = _emailSettings.Recipient,
-            //     Message = $"Please find below the new details\n Secret/Key: {settings.secret}\n IV: {settings.iv}.\n"
+            await _emailService.SendEmail(new MailVM
+            {
+                Title = "New Secret/IV Pair",
+                Recipient = _emailSettings.Recipient,
+                Message = $"Please find below the new details\n Secret/Key: {settings.secret}\n IV: {settings.iv}.\n"
 
-            // });
-            return Ok(settings);
+            });
+            return Ok(/*settings*/);
         }
         catch (Exception ex)
         {
