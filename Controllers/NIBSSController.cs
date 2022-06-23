@@ -52,7 +52,7 @@ public class NIBSSController : ControllerBase
             // get the encrypted header from the request header
             var hmac = Request.Headers["HASH"].ToString();
             var test = System.Text.Encoding.UTF8.GetBytes(settings.secret);
-            Console.WriteLine("test..." +settings.secret + "\n"+ test.Length);
+            Console.WriteLine("test..." + settings.secret + "\n" + test.Length);
             Console.WriteLine("hmac..." + "\n" + AESThenHMAC.Decrypt(
                     hmac,
                     settings.secret,
@@ -170,7 +170,7 @@ public class NIBSSController : ControllerBase
         }
         catch (Exception ex)
         {
-            return Ok(new{msg = "error sending values"});
+            return Ok(new { msg = "error sending values" });
         }
 
     }
