@@ -51,16 +51,19 @@ public class NIBSSController : ControllerBase
 
             // get the encrypted header from the request header
             var hmac = Request.Headers["HASH"].ToString();
-            Console.WriteLine("hmac..." + "\n" + AESThenHMAC.SimpleDecrypt(
-                                hmac,
-                               Convert.FromBase64String(settings.secret),
-                                Convert.FromBase64String(settings.secret)));
+            var test = System.Text.Encoding.UTF8.GetBytes(settings.secret);
+            Console.WriteLine("test..." +settings.secret + "\n"+ test.Length);
+            Console.WriteLine("hmac..." + "\n" + AESThenHMAC.Decrypt(
+                    hmac,
+                    settings.secret,
+                    settings.iv)
+                                );
 
             // desrialize hmac string into typed request object
-            var model = JsonConvert.DeserializeObject<ValidationRequest>(AESThenHMAC.SimpleDecrypt(
+            var model = JsonConvert.DeserializeObject<ValidationRequest>(AESThenHMAC.Decrypt(
                     hmac,
-                   Convert.FromBase64String(settings.secret),
-                    Convert.FromBase64String(settings.secret)));
+                    settings.secret,
+                    settings.iv));
 
             Console.WriteLine("4...");
             //perform ruleset validation here
@@ -97,16 +100,17 @@ public class NIBSSController : ControllerBase
 
             // get the encrypted header from the request header
             var hmac = Request.Headers["HASH"].ToString();
-            Console.WriteLine("hmac..." + "\n" + AESThenHMAC.SimpleDecrypt(
-                                hmac,
-                               Convert.FromBase64String(settings.secret),
-                                Convert.FromBase64String(settings.secret)));
+            Console.WriteLine("hmac..." + "\n" + AESThenHMAC.Decrypt(
+                    hmac,
+                    settings.secret,
+                    settings.iv)
+                                );
 
             // desrialize hmac string into typed request object
-            var model = JsonConvert.DeserializeObject<NotificationRequest>(AESThenHMAC.SimpleDecrypt(
+            var model = JsonConvert.DeserializeObject<NotificationRequest>(AESThenHMAC.Decrypt(
                     hmac,
-                   Convert.FromBase64String(settings.secret),
-                    Convert.FromBase64String(settings.secret)));
+                    settings.secret,
+                    settings.iv));
 
             Console.WriteLine("4...");
             //perform ruleset validation here
@@ -130,6 +134,13 @@ public class NIBSSController : ControllerBase
     {
         try
         {
+            // await _emailService.SendEmail(new MailVM
+            // {
+            //     Title = "New Secret/IV Pair",
+            //     Recipient = _emailSettings.Recipient,
+            //     Message = $"Please find below the new details\n \n"
+
+            // });
             Data.Models.Settings settings = _unitOfWork.Settings.GetSingleOrDefault(item => item.id > 0);
 
             if (settings == null)
@@ -137,25 +148,25 @@ public class NIBSSController : ControllerBase
                 settings = await _unitOfWork.Settings.Add(new Data.Models.Settings
                 {
                     billerName = "akindele04",
-                    iv = Convert.ToBase64String(AESThenHMAC.GetIV()),
-                    secret = Convert.ToBase64String(AESThenHMAC.NewKey()),
+                    iv = AESThenHMAC.IV(),
+                    secret = AESThenHMAC.Key(),
                 });
             }
             else
             {
-                settings.iv = Convert.ToBase64String(AESThenHMAC.GetIV());
-                settings.secret = Convert.ToBase64String(AESThenHMAC.NewKey());
+                settings.iv = AESThenHMAC.IV();
+                settings.secret = AESThenHMAC.Key();
                 settings = await _unitOfWork.Settings.Update(settings);
             }
 
-            await _emailService.SendEmail(new MailVM
-            {
-                Title = "New Secret/IV Pair",
-                Recipient = _emailSettings.Recipient,
-                Message = $"Please find below the new details\n Secret/Key: {settings.secret}\n IV: {settings.iv}.\n"
+            // await _emailService.SendEmail(new MailVM
+            // {
+            //     Title = "New Secret/IV Pair",
+            //     Recipient = _emailSettings.Recipient,
+            //     Message = $"Please find below the new details\n Secret/Key: {settings.secret}\n IV: {settings.iv}.\n"
 
-            });
-            return Ok();
+            // });
+            return Ok(settings);
         }
         catch (Exception ex)
         {
@@ -182,20 +193,21 @@ public class NIBSSController : ControllerBase
                 return Ok(new { message = "settings not found" });
             }
 
-            Console.WriteLine("val.request..." + val.request.GetType().FullName + "\n" + val.request.ToString());
+            var resp = AESThenHMAC.Encrypt(
+                    val.request.ToString(),
+                    val.key,
+                    val.iv);
+
             return Ok(new
             {
-                resp = AESThenHMAC.SimpleEncrypt(
-                    val.request.ToString(),
-                   Convert.FromBase64String(settings.secret),
-                    Convert.FromBase64String(settings.secret),
-                     Convert.FromBase64String(settings.iv))
+                resp = resp
             });
 
 
         }
         catch (Exception ex)
         {
+            Console.WriteLine("err: " + ex.Message + " : \n" + ex.StackTrace);
             return Ok();
         }
 

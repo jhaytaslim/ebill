@@ -1,4 +1,5 @@
 ﻿using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MimeKit;
@@ -25,7 +26,7 @@ namespace ebill.Utils
             _log = log.CreateLogger<EmailService>();
             _emailSettings = emailSettings;
         }
-        
+
         public IConfiguration Configuration { get; }
         public ILogger _log { get; }
         public IEmailSettings _emailSettings { get; }
@@ -57,8 +58,10 @@ namespace ebill.Utils
         {
             try
             {
-                var message = new MimeMessage();
+                return await this.Send(_emailSettings.Sender, model.Recipient, model.Title, model.Message);
                 
+                var message = new MimeMessage();
+
                 message.From.Add(new MailboxAddress("Ebill", _emailSettings.Sender));
 
                 message.Subject = model.Title;
@@ -74,7 +77,8 @@ namespace ebill.Utils
                 using (var emailClient = new SmtpClient())
                 {
                     //The last parameter here is to use SSL (Which you should!)
-                    emailClient.Connect(_emailSettings.MailServer, _emailSettings.MailPort, false);
+                    //emailClient.Connect(_emailSettings.MailServer, _emailSettings.MailPort, false);
+                    emailClient.Connect(_emailSettings.MailServer, _emailSettings.MailPort, SecureSocketOptions.StartTls);
 
                     //Remove any OAuth functionality as we won't be using it. 
                     emailClient.AuthenticationMechanisms.Remove("XOAUTH2");
@@ -93,6 +97,62 @@ namespace ebill.Utils
                 _log.LogError(e.Message + e.StackTrace);
                 return e.Message;
             }
+        }
+
+        public async Task<string> Send(string from, string to, string subject, string html= "Testinnnnng")
+        {
+            try
+            {
+                #region  MimeKit
+                // create message
+                var email = new MimeMessage();
+                email.From.Add(MailboxAddress.Parse(from));
+                email.To.Add(MailboxAddress.Parse(to));
+                email.Subject = subject;
+                email.Body = new TextPart(TextFormat.Html) { Text = html };
+
+                // send email
+                //using var smtp = new SmtpClient();
+                // smtp.Connect(_emailSettings.MailServer, _emailSettings.MailPort, SecureSocketOptions.StartTls);
+                // smtp.Connect("smtp.gmail.com", 465, SecureSocketOptions.StartTls);
+                // await smtp.ConnectAsync("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.None);
+                
+                using (var smtp = new SmtpClient())
+                {
+                    await smtp.ConnectAsync("smtp.gmail.com", 587, false);
+                    smtp.Authenticate(_emailSettings.Sender, _emailSettings.Password);
+                    smtp.Send(email);
+                    // smtp.Disconnect(true);
+                }
+                #endregion
+
+                #region "NetworkCred"
+                // SmtpClient SmtpServer = new SmtpClient("smtp.live.com");
+                // var mail = new MailMessage();
+                // mail.From = new MailAddress(_emailSettings.Sender);
+                // mail.To.Add(_emailSettings.Recipient);
+                // mail.Subject = "Test Mail - 1";
+                // mail.IsBodyHtml = true;
+                // string htmlBody;
+                // htmlBody = "Write some HTML code here";
+                // mail.Body = htmlBody;
+                // SmtpServer.Port = 587;
+                // SmtpServer.UseDefaultCredentials = false;
+                // SmtpServer.Credentials = new System.Net.NetworkCredential(_emailSettings.Sender, _emailSettings.Password);
+                // SmtpServer.EnableSsl = true;
+                // SmtpServer.Send(mail);
+                #endregion
+                
+                return "Email Sent Successfully!";
+
+
+            }
+            catch (Exception e)
+            {
+                _log.LogError(e.Message + e.StackTrace);
+                return e.Message;
+            }
+
         }
     }
 
