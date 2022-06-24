@@ -60,7 +60,7 @@ namespace ebill.Data.Repository
                 try
                 {
                     string[] result = { "", "", "" };
-                    //string oradb = ConfigurationManager.ConnectionStrings["idl"].ToString();
+                    string oradb = _connections.obj;//ConfigurationManager.ConnectionStrings["idl"].ToString();
                     string sql1 = "";
                     using (SqlConnection conn = new SqlConnection(oradb))
                     {
@@ -161,7 +161,32 @@ namespace ebill.Data.Repository
             }
             return resp;
         }
+        private string getPath(string add)
+        {
+            string strPath = "c:\\db\\a\\loggs\\" + add;
+            if (System.IO.Directory.Exists("f:\\"))
+            {
+                strPath = "F:\\AGL_IDL_NIBSS\\bin\\loggs\\" + add;
 
+            }
+            try
+            {
+                if (!System.IO.Directory.Exists(strPath))
+                {
+                    System.IO.Directory.CreateDirectory(strPath);
+                }
+            }
+            catch
+            {
+                strPath = "c:\\db\\a\\loggs\\" + add;
+                if (!System.IO.Directory.Exists(strPath))
+                {
+                    System.IO.Directory.CreateDirectory(strPath);
+                }
+            }
+            return strPath;
+
+        }
         public NotificationResponse Notification(NotificationRequest model)
         {
             NotificationResponse resp = new NotificationResponse();
@@ -220,7 +245,7 @@ namespace ebill.Data.Repository
                 }
 
                 // PostPayment needs to be written
-                PostPayment(cid, Convert.ToDecimal(model.Amount), model.CustomerAccountNumber);
+                PostPayment(cid, Convert.ToDecimal (model.Amount), model.CustomerAccountNumber);
 
                 return resp;
             }
@@ -234,17 +259,19 @@ namespace ebill.Data.Repository
 
         private void PostPayment(string customerID, decimal Amount, string CustomerAccountNumber)
         {
-            string strOBJ = _connections.obj;
+            string strOBJ = _connections.obj;//ConfigurationManager.AppSettings["obj"].ToString();
             Boolean ok = false;
             string extra = "";
             int add = 0;
+            string BPANUM_0 = "";
             try
             {
                 string strLine = "";
                 string strDate = "";
                 string[] result = { "", "", "" };
                 string BPCNAM_0 = "";
-                string BPANUM_0 = "";
+                //string BPANUM_0 = "";
+               // string BPANUM_0 = "";
                 string BPAADDLIG_0 = "";
                 string BPAADDLIG_1 = "";
                 string BPAADDLIG_2 = "";
@@ -260,7 +287,7 @@ namespace ebill.Data.Repository
 
                 string sql = "";
                 string COUNTT = "";
-                string oradb = _connections.idl;// ConfigurationManager.ConnectionStrings["idl"].ToString();
+                string oradb = _connections.obj; //ConfigurationManager.ConnectionStrings["idl"].ToString();
                 string sql1 = "";
                 using (SqlConnection conn = new SqlConnection(oradb))
                 {
@@ -279,7 +306,7 @@ namespace ebill.Data.Repository
                     {
 
                         strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " (Notification SESSION ) :" + sessionID; //+ "SELECT [BPCNUM_0] ,[BPCNAM_0] ,  [BPANUM_0]   ,[BPAADDLIG_0] ,[BPAADDLIG_1] ,[BPAADDLIG_2]   ,[MOB_0] ,[WEB_0], [POSCOD_0] ,[CTY_0] ,[SAT_0] ,[CRY_0] ,[CRYNAM_0] FROM [" + strOBJ + "].[BPCUSTOMER]  inner join  [" + strOBJ + "].[BPADDRESS] on BPCNUM_0 = BPANUM_0 WHERE upper(rtrim(ltrim(BPCNUM_0))) =  upper('" + customerID.Trim() + "')";
-                        //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                        System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                         add++;
                         ok = true;
                     }
@@ -297,7 +324,7 @@ namespace ebill.Data.Repository
                         {
 
                             strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " \r\n\r\n(Notification request SQL) :" + " selected";
-                            //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                            System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                             add++;
                             ok = true;
                         }
@@ -312,7 +339,7 @@ namespace ebill.Data.Repository
                             {
 
                                 strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " \r\n\r\n(Notification request SQL) :" + " has rows";
-                                //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                                System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                                 add++;
                                 ok = true;
                             }
@@ -327,7 +354,7 @@ namespace ebill.Data.Repository
                                 {
 
                                     strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " \r\n\r\n(Notification request SQL) :" + " in read";
-                                    //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                                    System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                                     add++;
                                     ok = true;
                                 }
@@ -345,7 +372,7 @@ namespace ebill.Data.Repository
                                     {
 
                                         strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " \r\n\r\n(Notification request SQL) :" + " start read";
-                                        //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                                        System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                                         add++;
                                         ok = true;
                                     }
@@ -353,7 +380,7 @@ namespace ebill.Data.Repository
                                     {
 
                                     }
-
+                                    
                                     // strResult += "\"product_id\": \"" + reader["product_id"].ToString() + "\"";
                                     BPCNAM_0 = reader["BPCNAM_0"].ToString();
                                     BPANUM_0 = reader["BPANUM_0"].ToString();
@@ -371,7 +398,7 @@ namespace ebill.Data.Repository
                                     {
 
                                         strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " \r\n\r\n(Notification request SQL) :" + " done read";
-                                        //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                                        System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                                         add++;
                                         ok = true;
                                     }
@@ -416,7 +443,7 @@ namespace ebill.Data.Repository
                     string strLine = "";
                     string strDate = "";
                     strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " \r\n\r\n(Notification request SQL) :" + " error : " + c.Message;
-                    //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                    System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
                     add++;
                     ok = true;
                 }
@@ -426,204 +453,201 @@ namespace ebill.Data.Repository
                 }
             }
 
-
-
-            // if (BPANUM_0.Trim().Length > 0)
-            // {
+            //string BPANUM_0 = "";
 
 
 
-
-
-
-            //     try
-            //     {
-            //         string sessionID;
-            //         string[] result = { "", "", "" };
-            //         string oradb = _connections.idl; //ConfigurationManager.ConnectionStrings["idl"].ToString();
-            //         string sql1 = "";
-            //         string COUNTT = "";
-            //         using (SqlConnection conn = new SqlConnection(oradb))
-            //         {
-            //             conn.Open();
-            //             //   strResult = "{ \"items\": [ ";
-            //             //AGENT-BP000001
-            //             //
-            //             //string d = (System.DateTime.Now.ToString("yyMMddHHmmss"));
-            //             //string h = toHex(d);
-            //             ////Taslim
-            //             string strCode = "";//= /"RECAIDL"/ "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss"));
-            //             using (SqlCommand cmd = new SqlCommand("SELECT  count(*) c  FROM  [" + strOBJ + "].[PAYMENTH]   where rtrim(ltrim(upper(NUM_0))) like '" + strCode.ToUpper() + "%'", conn))
-            //             {
-            //                 SqlDataReader reader = cmd.ExecuteReader();
-
-            //                 if (reader.HasRows)
-            //                 {
-            //                     while (reader.Read())
-            //                     {
-
-            //                         if (reader.HasRows)
-            //                         {
-            //                             while (reader.Read())
-            //                             {
-
-            //                                 COUNTT = reader["c"].ToString();
-            //                                 strCode += (long.Parse(COUNTT) + 1).ToString();
-            //                                 break;
-
-            //                             }
-            //                         }
-            //                         else
-            //                         {
-            //                             // MessageBox.Show("No rows found.");
-            //                         }
-            //                         reader.Close();
-            //                         // }
-
-
-
-            //                         break;
-            //                     }
-            //                 }
-            //                 else
-            //                 {
-            //                     // MessageBox.Show("No rows found.");
-            //                 }
-            //                 reader.Close();
-            //             }
-
-            //             conn.Dispose();
-            //         }
-
-
-
-            //     }
-            //     catch (Exception c)
-            //     {
-
-            //     }
-
-            //     string strLongDate = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
-            //     string sql = "";
-            //     string strDate = "";
-            //     //0 - strCode
-            //     //1 - customerID
-            //     //2 - item.Amount.Replace(",","")
-            //     //3 - item.Amount.Replace(",","")
-            //     //4 - strLongDate
-            //     //5 - strLongDate
-            //     //6 - strOBJ
-
-
-            //     int n = -1;
-            //     try
-            //     {
-            //         string[] result = { "", "", "" };
-            //         string oradb = _connections.idl; // ConfigurationManager.ConnectionStrings["idl"].ToString();
-            //         string sql1 = "";
-            //         using (SqlConnection conn = new SqlConnection(oradb))
-            //         {
-            //             conn.Open();
-            //             //   strResult = "{ \"items\": [ ";
-            //             //AGENT-BP000001
-            //             //Taslim
-            //             string strCode=""; //=  /"RECAIDL"/  "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss"));//"RECAIDL" + System.DateTime.Now.ToString("yymm");
-
-            //             String SQL = string.Format(ResourceManager.GetString("pd.sql"), strCode.Replace("'", "`"), customerID.Replace("'", "`"), Amount.Replace(",", ""), Amount.Replace(",", ""), strLongDate.Replace("'", "`"), strLongDate.Replace("'", "`"), strOBJ.Replace("'", "`"), sessionID.Replace("'", "`"));
-            //             sql += SQL;
-            //             using (SqlCommand cmd = new SqlCommand(SQL, conn))
-            //             {
-            //                 // n =  cmd.ExecuteNonQuery();
-
-
-            //             }
-
-            //             conn.Dispose();
-            //         }
-
-
-
-            //     }
-            //     catch (Exception c)
-            //     {
-
-
-
-            //         try
-            //         {
-
-            //             string strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " (Notification D ERROR ) :" + c.Message; //+ "SELECT [BPCNUM_0] ,[BPCNAM_0] ,  [BPANUM_0]   ,[BPAADDLIG_0] ,[BPAADDLIG_1] ,[BPAADDLIG_2]   ,[MOB_0] ,[WEB_0], [POSCOD_0] ,[CTY_0] ,[SAT_0] ,[CRY_0] ,[CRYNAM_0] FROM [" + strOBJ + "].[BPCUSTOMER]  inner join  [" + strOBJ + "].[BPADDRESS] on BPCNUM_0 = BPANUM_0 WHERE upper(rtrim(ltrim(BPCNUM_0))) =  upper('" + customerID.Trim() + "')";
-            //             //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
-            //             add++;
-            //             ok = true;
-            //         }
-            //         catch (Exception ds)
-            //         {
-
-            //         }
-
-            //     }
+            if (BPANUM_0.Trim().Length > 0)
+            {
 
 
 
 
 
 
-            //     try
-            //     {
+                try
+                {
+                    string sessionID;
+                    string[] result = { "", "", "" };
+                    string oradb = _connections.obj;// ConfigurationManager.ConnectionStrings["idl"].ToString();
+                    string sql1 = "";
+                    string COUNTT = "";
+                    using (SqlConnection conn = new SqlConnection(oradb))
+                    {
+                        conn.Open();
+                        //   strResult = "{ \"items\": [ ";
+                        //AGENT-BP000001
+                        //
+                        //string d = (System.DateTime.Now.ToString("yyMMddHHmmss"));
+                        //string h = toHex(d);
+                        ////Taslim
+                        string strCode = "";//= /"RECAIDL"/ "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss"));
+                        using (SqlCommand cmd = new SqlCommand("SELECT  count(*) c  FROM  [" + strOBJ + "].[PAYMENTH]   where rtrim(ltrim(upper(NUM_0))) like '" + strCode.ToUpper() + "%'", conn))
+                        {
+                            SqlDataReader reader = cmd.ExecuteReader();
 
-            //         string[] result = { "", "", "" };
-            //         string oradb = ConfigurationManager.ConnectionStrings["idl"].ToString();
-            //         string sql1 = "";
-            //         using (SqlConnection conn = new SqlConnection(oradb))
-            //         {
-            //             conn.Open();
-            //             //   strResult = "{ \"items\": [ ";
-            //             //AGENT-BP000001
-            //             //Taslim
-            //             string strCode= ""; //= /"RECAIDL"/  "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss")); ;// "RECAIDL" + System.DateTime.Now.ToString("yymm");
-            //             ///
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
 
+                                    if (reader.HasRows)
+                                    {
+                                        while (reader.Read())
+                                        {
 
-            //             //String SQL = string.Format(ResourceManager.GetString("ph.sql"), strOBJ, strCode, customerID, item.Amount.Replace(",", ""), strLongDate, "NIBSS - IDL integration", BPCNAM_0, BPAADDLIG_0, BPAADDLIG_1, BPAADDLIG_2, POSCOD_0, CTY_0, SAT_0, CRY_0, CRYNAM_0, bankCode);
+                                            COUNTT = reader["c"].ToString();
+                                            strCode += (long.Parse(COUNTT) + 1).ToString();
+                                            break;
 
-            //             String SQL = string.Format(ResourceManager.GetString("ph.sql"), strOBJ.Replace("'", "`"), strCode.Replace("'", "`"), customerID.Replace("'", "`"), Amount.Replace(",", ""), strLongDate.Replace("'", "`"), CustomerAccountNumber.Replace("'", "`"), BPCNAM_0.Replace("'", "`"), BPAADDLIG_0.Replace("'", "`"), BPAADDLIG_1.Replace("'", "`"), BPAADDLIG_2.Replace("'", "`"), POSCOD_0.Replace("'", "`"), CTY_0.Replace("'", "`"), SAT_0.Replace("'", "`"), CRY_0.Replace("'", "`"), CRYNAM_0.Replace("'", "`"), bankCode.Replace("'", "`"), sessionID.Replace("'", "`"));
-
-
-            //             sql += ";;;;;;" + SQL + ";;;;;;";
-            //             using (SqlCommand cmd = new SqlCommand(SQL, conn))
-            //             {
-            //                 //   n = cmd.ExecuteNonQuery();
-
-
-            //             }
-
-            //             conn.Dispose();
-            //         }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // MessageBox.Show("No rows found.");
+                                    }
+                                    reader.Close();
+                                    // }
 
 
 
-            //     }
-            //     catch (Exception c)
-            //     {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                // MessageBox.Show("No rows found.");
+                            }
+                            reader.Close();
+                        }
+
+                        conn.Dispose();
+                    }
 
 
-            //         try
-            //         {
 
-            //             string strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " (Notification H ERROR ) :" + c.Message; //+ "SELECT [BPCNUM_0] ,[BPCNAM_0] ,  [BPANUM_0]   ,[BPAADDLIG_0] ,[BPAADDLIG_1] ,[BPAADDLIG_2]   ,[MOB_0] ,[WEB_0], [POSCOD_0] ,[CTY_0] ,[SAT_0] ,[CRY_0] ,[CRYNAM_0] FROM [" + strOBJ + "].[BPCUSTOMER]  inner join  [" + strOBJ + "].[BPADDRESS] on BPCNUM_0 = BPANUM_0 WHERE upper(rtrim(ltrim(BPCNUM_0))) =  upper('" + customerID.Trim() + "')";
-            //             //System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
-            //             add++;
-            //             ok = true;
-            //         }
-            //         catch (Exception ds)
-            //         {
+                }
+                catch (Exception c)
+                {
 
-            //         }
-            //     }
+                }
 
-            // }
-        
+                string strLongDate = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+                string sql = "";
+                string strDate = "";
+                //0 - strCode
+                //1 - customerID
+                //2 - item.Amount.Replace(",","")
+                //3 - item.Amount.Replace(",","")
+                //4 - strLongDate
+                //5 - strLongDate
+                //6 - strOBJ
+
+
+                int n = -1;
+                try
+                {
+                    string[] result = { "", "", "" };
+                    string oradb = _connections.obj; //ConfigurationManager.ConnectionStrings["idl"].ToString();
+                    string sql1 = "";
+                    using (SqlConnection conn = new SqlConnection(oradb))
+                    {
+                        conn.Open();
+                        //   strResult = "{ \"items\": [ ";
+                        //AGENT-BP000001
+                        //Taslim
+                        string strCode; //=  /"RECAIDL"/  "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss"));//"RECAIDL" + System.DateTime.Now.ToString("yymm");
+
+                        String SQL = ""; //string.Format(ResourceManager.GetString("pd.sql"), strCode.Replace("'", "`"), customerID.Replace("'", "`"), Amount.Replace(",", ""), Amount.Replace(",", ""), strLongDate.Replace("'", "`"), strLongDate.Replace("'", "`"), strOBJ.Replace("'", "`"), sessionID.Replace("'", "`"));
+                        sql += SQL;
+                        using (SqlCommand cmd = new SqlCommand(SQL, conn))
+                        {
+                            // n =  cmd.ExecuteNonQuery();
+
+
+                        }
+
+                        conn.Dispose();
+                    }
+
+
+
+                }
+                catch (Exception c)
+                {
+
+
+
+                    try
+                    {
+
+                        string strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " (Notification D ERROR ) :" + c.Message; //+ "SELECT [BPCNUM_0] ,[BPCNAM_0] ,  [BPANUM_0]   ,[BPAADDLIG_0] ,[BPAADDLIG_1] ,[BPAADDLIG_2]   ,[MOB_0] ,[WEB_0], [POSCOD_0] ,[CTY_0] ,[SAT_0] ,[CRY_0] ,[CRYNAM_0] FROM [" + strOBJ + "].[BPCUSTOMER]  inner join  [" + strOBJ + "].[BPADDRESS] on BPCNUM_0 = BPANUM_0 WHERE upper(rtrim(ltrim(BPCNUM_0))) =  upper('" + customerID.Trim() + "')";
+                        System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                        add++;
+                        ok = true;
+                    }
+                    catch (Exception ds)
+                    {
+
+                    }
+
+                }
+
+
+
+
+
+
+                try
+                {
+
+                    string[] result = { "", "", "" };
+                    string oradb = _connections.obj; //ConfigurationManager.ConnectionStrings["idl"].ToString();
+                    string sql1 = "";
+                    using (SqlConnection conn = new SqlConnection(oradb))
+                    {
+                        conn.Open();
+                        //   strResult = "{ \"items\": [ ";
+                        //AGENT-BP000001
+                        //Taslim
+                        string strCode; //= /"RECAIDL"/  "REC" + customerID.ToUpper() + toHex(System.DateTime.Now.ToString("yyMMddHHmmss")); ;// "RECAIDL" + System.DateTime.Now.ToString("yymm");
+                        ///
+
+
+                        //String SQL = string.Format(ResourceManager.GetString("ph.sql"), strOBJ, strCode, customerID, item.Amount.Replace(",", ""), strLongDate, "NIBSS - IDL integration", BPCNAM_0, BPAADDLIG_0, BPAADDLIG_1, BPAADDLIG_2, POSCOD_0, CTY_0, SAT_0, CRY_0, CRYNAM_0, bankCode);
+
+                        String SQL = ""; // string.Format(ResourceManager.GetString("ph.sql"), strOBJ.Replace("'", "`"), strCode.Replace("'", "`"), customerID.Replace("'", "`"), Amount.Replace(",", ""), strLongDate.Replace("'", "`"), CustomerAccountNumber.Replace("'", "`"), BPCNAM_0.Replace("'", "`"), BPAADDLIG_0.Replace("'", "`"), BPAADDLIG_1.Replace("'", "`"), BPAADDLIG_2.Replace("'", "`"), POSCOD_0.Replace("'", "`"), CTY_0.Replace("'", "`"), SAT_0.Replace("'", "`"), CRY_0.Replace("'", "`"), CRYNAM_0.Replace("'", "`"), bankCode.Replace("'", "`"), sessionID.Replace("'", "`"));
+
+
+                        sql += ";;;;;;" + SQL + ";;;;;;";
+
+                    }
+
+                    //conn.Dispose();
+                }
+
+
+                
+                //}
+                catch (Exception c)
+                {
+
+
+                    try
+                    {
+
+                        string strLine = System.DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") + " (Notification H ERROR ) :" + c.Message; //+ "SELECT [BPCNUM_0] ,[BPCNAM_0] ,  [BPANUM_0]   ,[BPAADDLIG_0] ,[BPAADDLIG_1] ,[BPAADDLIG_2]   ,[MOB_0] ,[WEB_0], [POSCOD_0] ,[CTY_0] ,[SAT_0] ,[CRY_0] ,[CRYNAM_0] FROM [" + strOBJ + "].[BPCUSTOMER]  inner join  [" + strOBJ + "].[BPADDRESS] on BPCNUM_0 = BPANUM_0 WHERE upper(rtrim(ltrim(BPCNUM_0))) =  upper('" + customerID.Trim() + "')";
+                       /// System.IO.File.AppendAllText(getPath(extra) + strDate, strLine + "\n\r");
+                        add++;
+                        ok = true;
+                    }
+                    catch (Exception ds)
+                    {
+
+                    }
+                }
+
+            }
         }
 
     }
