@@ -36,6 +36,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSingleton<IEmailSettings>(settings);
 
     builder.Services.AddSingleton<IEmailService, EmailService>();
+    // builder.Services.AddTransient<ICryptography,Cryptography>();
 
     builder.Services.AddCors();
     builder.Services.AddControllers();

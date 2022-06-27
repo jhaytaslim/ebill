@@ -11,6 +11,7 @@ using System.Text;
 using System.Security.Claims;
 using Newtonsoft.Json;
 using ebill.Extensions;
+using ebill.Data;
 // using Microsoft.AspNet.WebApi.Client;
 
 public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
@@ -33,15 +34,19 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
-        ISystemClock clock
+        ISystemClock clock,
+        IUnitOfWork unitOfWork
         ) : base(options, logger, encoder, clock)
     {
         //  _logger = (ILogger) logger;
-
+        // _crypto = crypto;
+        _unitOfWork = unitOfWork;
 
     }
 
     private readonly ILogger _logger;
+    private readonly ICryptography _crypto;
+    private readonly IUnitOfWork _unitOfWork;
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
@@ -54,15 +59,27 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
         // if (!Request.Headers.ContainsKey("Authorization"))
         //     return AuthenticateResult.Fail("Missing Authorization Header");
 
+        // check for secret setup
+        Data.Models.Settings settings = _unitOfWork.Settings.GetSingleOrDefault(item => item.id > 0);
+        Console.WriteLine("settings: " + settings.secret);
+        if (settings == null || string.IsNullOrEmpty(settings?.secret))
+        {
+            Response.StatusCode = 401;
+            Response.Headers.Add("WWW-Authenticate", $"Basic realm=\"localhost\"");
+            return Task.FromResult(AuthenticateResult.Fail("System Not setup"));
+        }
+
         var authHeader = Request.Headers["Authorization"].ToString();
         var signature = Request.Headers["SIGNATURE"].ToString();
         var hmac = Request.Headers["HASH"].ToString();
         var str = Request.GetRawBodyStringAsync().GetAwaiter().GetResult();
 
         //check if signature is equal to sha256 of todays date
-        Cryptography crypt = new Cryptography();
-        var dateSha256 = crypt.EncryptSHA256(DateTime.Now.ToString("yyyyMMdd"));
-        var username = Cryptography.Base64Decode(authHeader);
+        var today = DateTime.Now.ToString("yyyyMMdd");
+        var secret = settings.secret;
+        Cryptography crypt = new Cryptography(_unitOfWork);
+        var dateSha256 = crypt.EncryptSHA256($"{today}{secret}");
+        var username = crypt.Base64Decode(authHeader);
 
         if (dateSha256.ToLower() != signature.ToLower())
         {

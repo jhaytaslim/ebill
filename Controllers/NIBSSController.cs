@@ -45,15 +45,16 @@ public class NIBSSController : ControllerBase
             {
                 return BadRequest(new { message = "settings not found" });
             }
+            Console.WriteLine("7...", settings.secret, settings.iv);
 
             // get the encrypted header from the request header
             var hmac = Request.Headers["HASH"].ToString();
             
-            // Console.WriteLine("hmac..." + "\n" + AESThenHMAC.Decrypt(
-            //         hmac,
-            //         settings.secret,
-            //         settings.iv)
-            //                     );
+            Console.WriteLine("hmac..." + "\n" + AESThenHMAC.Decrypt(
+                    hmac,
+                    settings.secret,
+                    settings.iv)
+                                );
 
             // desrialize hmac string into typed request object
             var model = JsonConvert.DeserializeObject<ValidationRequest>(AESThenHMAC.Decrypt(
@@ -162,7 +163,8 @@ public class NIBSSController : ControllerBase
                 Message = $"Please find below the new details\n Secret/Key: {settings.secret}\n IV: {settings.iv}.\n"
 
             });
-            return Ok(/*settings*/);
+            //return Ok(/*settings*/);
+             return Ok(settings);
         }
         catch (Exception ex)
         {
