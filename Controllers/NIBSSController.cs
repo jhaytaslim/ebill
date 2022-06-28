@@ -13,7 +13,7 @@ namespace ebill.Controllers;
 [Authorize(AuthenticationSchemes = "BasicAuthentication")]
 public class NIBSSController : ControllerBase
 {
-    
+
 
     private IUnitOfWork _unitOfWork;
     private ILogger<dynamic> _log;
@@ -49,7 +49,7 @@ public class NIBSSController : ControllerBase
 
             // get the encrypted header from the request header
             var hmac = Request.Headers["HASH"].ToString();
-            
+
             Console.WriteLine("hmac..." + "\n" + AESThenHMAC.Decrypt(
                     hmac,
                     settings.secret,
@@ -64,7 +64,11 @@ public class NIBSSController : ControllerBase
 
             //Console.WriteLine("4...");
             //perform ruleset validation here
-            var response = _unitOfWork.Oracle.Validation(model);
+            var validate = JsonConvert.SerializeObject(_unitOfWork.Oracle.Validation(model));
+
+            var response = AESThenHMAC.Encrypt(validate, settings.secret,
+                    settings.iv);
+
 
             //decide on the response
             return Ok(response);
@@ -111,7 +115,11 @@ public class NIBSSController : ControllerBase
 
             //Console.WriteLine("4...");
             //perform ruleset validation here
-            var response = _unitOfWork.Oracle.Notification(model);
+            
+             var validate = JsonConvert.SerializeObject(_unitOfWork.Oracle.Notification(model));
+
+            var response = AESThenHMAC.Encrypt(validate, settings.secret,
+                    settings.iv);
 
             //decide on the response
             return Ok(response);
@@ -164,7 +172,7 @@ public class NIBSSController : ControllerBase
 
             });
             //return Ok(/*settings*/);
-             return Ok(settings);
+            return Ok(settings);
         }
         catch (Exception ex)
         {
